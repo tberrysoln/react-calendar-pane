@@ -1,11 +1,11 @@
 import 'core-js/es6/map';
 import 'core-js/es6/set';
 
-import moment from 'moment';
 import React from 'react';
 import Calendar from '../src/Calendar';
 import asserter from './assertions/Asserter';
 import chai from 'chai';
+import { format as formatDate, startOfMonth, endOfMonth, isBefore, isSameMonth, add, sub, subDays, getDay, setDay } from "date-fns";
 
 const expect = chai.expect;
 
@@ -14,7 +14,7 @@ describe('Calendar', () => {
 
   it('displays the correct year', () => {
     const calendar = (
-      <Calendar date={moment('03/04/2015', 'DD/MM/YYYY')} onSelect={onSelect} />
+      <Calendar date={new Date('03/04/2015')} onSelect={onSelect} />
     );
 
     asserter(calendar).assertYear('2015');
@@ -22,7 +22,7 @@ describe('Calendar', () => {
 
   it('displays the correct month', () => {
     const calendar = (
-      <Calendar date={moment('03/04/2015', 'DD/MM/YYYY')} onSelect={onSelect} />
+      <Calendar date={new Date('04/03/2015')} onSelect={onSelect} />
     );
 
     asserter(calendar).assertMonth('April');
@@ -30,7 +30,7 @@ describe('Calendar', () => {
 
   it('should be able to go to previous month', () => {
     const calendar = (
-      <Calendar date={moment('03/04/2015', 'DD/MM/YYYY')} onSelect={onSelect} />
+      <Calendar date={new Date('04/03/2015')} onSelect={onSelect} />
     );
 
     asserter(calendar)
@@ -38,16 +38,16 @@ describe('Calendar', () => {
       .assertMonth('March');
   });
 
-  it('should be tell you when you move months', done => {
+  it('should tell you when you move months', done => {
     const callback = (month, start, end) => {
-      expect(month.format("MMMM")).to.equal("March");
-      expect(start.format("DD/MM/YYYY")).to.equal("01/03/2015");
-      expect(end.format("DD/MM/YYYY")).to.equal("05/04/2015");
+      expect(formatDate(month, "MMMM")).to.equal("March");
+      expect(formatDate(start, "MM/dd/yyyy")).to.equal("03/01/2015");
+      expect(formatDate(end, "MM/dd/yyyy")).to.equal("04/05/2015");
       done();
     };
 
     const calendar = (
-      <Calendar date={moment('03/04/2015', 'DD/MM/YYYY')} onSelect={onSelect} onViewChanged={callback} />
+      <Calendar date={new Date('04/03/2015')} onSelect={onSelect} onViewChanged={callback} />
     );
 
     asserter(calendar)
@@ -56,7 +56,7 @@ describe('Calendar', () => {
 
   it('should be able to go to next month', () => {
     const calendar = (
-      <Calendar date={moment('03/04/2015', 'DD/MM/YYYY')} onSelect={onSelect} />
+      <Calendar date={new Date('04/03/2015')} onSelect={onSelect} />
     );
 
     asserter(calendar)
@@ -66,12 +66,12 @@ describe('Calendar', () => {
 
   it('should trigger the callback with selected date when clicking a day', done => {
     const callback = selectedDate => {
-      expect(moment(selectedDate).format('DD/MM/YYYY')).to.equal('08/04/2015');
+      expect(formatDate(new Date(selectedDate), "MM/dd/yyyy")).to.equal('04/08/2015');
       done();
     };
 
     const calendar = (
-      <Calendar date={moment('03/04/2015', 'DD/MM/YYYY')} onSelect={callback} />
+      <Calendar date={new Date('04/03/2015')} onSelect={callback} />
     );
 
     asserter(calendar).clickDay(8);
@@ -79,7 +79,7 @@ describe('Calendar', () => {
 
   it('should set selected date to selected', () => {
     const calendar = (
-      <Calendar date={moment('03/04/2015', 'DD/MM/YYYY')} onSelect={onSelect} />
+      <Calendar date={new Date('04/03/2015')} onSelect={onSelect} />
     );
 
     asserter(calendar)
@@ -88,17 +88,17 @@ describe('Calendar', () => {
   });
 
   it('should add class to today', () => {
-    const calendar = <Calendar date={moment()} onSelect={onSelect} />;
+    const calendar = <Calendar date={new Date()} onSelect={onSelect} />;
 
     asserter(calendar).assertToday();
   });
 
-  it("day of week format defaults to 'dd' when format is invalid", () => {
+  it("day of week format defaults to 'EEEEEE' when format is invalid", () => {
     const formats = ['', null];
 
     formats.forEach((format) => {
       const calendar = (
-        <Calendar date={moment()} onSelect={onSelect} dayOfWeekFormat={format} />
+        <Calendar date={new Date()} onSelect={onSelect} dayOfWeekFormat={format} />
       );
 
       asserter(calendar).assertDayOfTheWeek(format);
@@ -106,11 +106,11 @@ describe('Calendar', () => {
   });
 
   it('displays day of the week following a given format', () => {
-    const formats = ['d', 'dd', 'ddd', 'dddd'];
+    const formats = ['EEEE', 'EEEEE', 'EEEEEE'];
 
     formats.forEach((format) => {
       const calendar = (
-        <Calendar date={moment()} onSelect={onSelect} dayOfWeekFormat={format} />
+        <Calendar date={new Date()} onSelect={onSelect} dayOfWeekFormat={format} />
       );
 
       asserter(calendar).assertDayOfTheWeek(format);

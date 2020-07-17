@@ -214,7 +214,7 @@ var Calendar = function (_Component) {
 
       if (flag === true) {
         this.setState({
-          date: new Date()
+          date: new Date(date)
         });
       } else if (flag === false) {
         this.setState({
@@ -250,7 +250,7 @@ var Calendar = function (_Component) {
       var month = this.state.month;
 
       var start = (0, _dateFns.setDay)((0, _dateFns.startOfMonth)(month), startOfWeekIndex);
-      var end = (0, _dateFns.setDay)((0, _dateFns.startOfMonth)(month), 7 + startOfWeekIndex);
+      var end = (0, _dateFns.setDay)((0, _dateFns.endOfMonth)(month), 7 + startOfWeekIndex);
 
       onViewChanged(month, start, end);
     }
@@ -266,8 +266,7 @@ var Calendar = function (_Component) {
 
       var today = new Date();
 
-      var format = dayOfWeekFormat && dayOfWeekFormat !== '' && dayOfWeekFormat;
-
+      var format = dayOfWeekFormat && dayOfWeekFormat !== '' ? dayOfWeekFormat : 'EEEEEE';
       var date = this.state.date;
       var month = this.state.month;
 

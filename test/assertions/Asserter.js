@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React from 'react';
 import {
   findDOMNode
@@ -9,6 +8,7 @@ import {
   findRenderedDOMComponentWithClass,
   renderIntoDocument,
 } from 'react-dom/test-utils';
+import { format as formatDate, startOfMonth, endOfMonth, isBefore, isSameMonth, add, sub, subDays, getDay, setDay } from "date-fns";
 
 import chai from 'chai';
 
@@ -52,7 +52,7 @@ export default jsx => {
     assertToday() {
       const today = findRenderedDOMComponentWithClass(calendar, 'today');
       const value = findDOMNode(today).textContent;
-      expect(value).to.equal(moment().format('D'));
+      expect(value).to.equal(formatDate(new Date(), 'd'));
       return this;
     },
 
@@ -71,12 +71,11 @@ export default jsx => {
       let currentDayOfTheWeek = 0;
 
       daysOfTheWeek.forEach((dayOfTheWeek) => {
-        const currentDate = moment(currentDayOfTheWeek, 'd');
-        const format = dayOfWeekFormat && dayOfWeekFormat !== '' &&
-                        moment(currentDate, dayOfWeekFormat).isValid() ? dayOfWeekFormat : 'dd';
+        const currentDate = setDay(new Date(), currentDayOfTheWeek);
+        const format = (dayOfWeekFormat && dayOfWeekFormat !== '') ? dayOfWeekFormat : 'EEEEEE';
         const value = findDOMNode(dayOfTheWeek).textContent;
 
-        expect(value).to.equal(moment(currentDate).format(format));
+        expect(value).to.equal(formatDate(new Date(currentDate), format));
 
         currentDayOfTheWeek++;
       })
