@@ -27,6 +27,10 @@ class Calendar extends Component {
     this.viewChanged = this.viewChanged.bind(this);
   }
 
+  componentWillMount() {
+    this.viewChanged();
+  }
+
   handleClick(date) {
     const flag = this.props.onSelect(date, this.state.date, this.state.month);
 
