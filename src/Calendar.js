@@ -32,7 +32,7 @@ class Calendar extends Component {
 
     if (flag === true) {
       this.setState({
-        date: new Date(),
+        date: new Date(date),
       });
     } else if (flag === false) {
       this.setState({
@@ -63,7 +63,7 @@ class Calendar extends Component {
     let { month } = this.state;
 
     const start = setDay(startOfMonth(month), startOfWeekIndex);
-    const end = setDay(startOfMonth(month), 7 + startOfWeekIndex);
+    const end = setDay(endOfMonth(month), 7 + startOfWeekIndex);
 
     onViewChanged(month, start, end);
   }
@@ -75,9 +75,7 @@ class Calendar extends Component {
 
     const today = new Date();
 
-    const format = dayOfWeekFormat &&
-      dayOfWeekFormat !== '' && dayOfWeekFormat
-
+    const format = (dayOfWeekFormat && dayOfWeekFormat !== '') ? dayOfWeekFormat : 'EEEEEE'
     const date = this.state.date;
     const month = this.state.month;
 
