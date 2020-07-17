@@ -1,27 +1,26 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Calendar from '../lib/Calendar.js';
-import moment from 'moment';
-import momentFr from 'moment/locale/fr';
+import { format, isSameDay, isSameMonth, isWeekend } from 'date-fns';
 
 const customDayRenderer = ({ handleClick, date }) => {
   return (
     <a
       className="Day-inner"
-      href={'#' + date.format('YYYY-MM-DD')}
+      href={'#' + format(date, 'do')}
       onClick={() => handleClick(date)}
     >
-      {date.format('D')}
+      {format(date, 'do')}
     </a>
   );
 };
 
 class Example extends Component {
   onSelect(date, previousDate, currentMonth) {
-    if (moment(date).isSame(previousDate)) {
+    if (isSameDay(date, previousDate)) {
       console.info('onSelect: false', date);
       return false;
-    } else if (currentMonth.isSame(date, 'month')) {
+    } else if (isSameMonth(currentMonth, date)) {
       console.info('onSelect: true', date);
       return true;
     } else {
@@ -30,9 +29,8 @@ class Example extends Component {
   }
 
   render() {
-    let dayClasses = function(date) {
-      let day = date.isoWeekday();
-      if (day === 6 || day === 7) {
+    let dayClasses = function (date) {
+      if (isWeekend(date)) {
         return ['weekend'];
       }
       return [];
@@ -46,13 +44,6 @@ class Example extends Component {
           onSelect={this.onSelect}
           dayClasses={dayClasses}
           useNav={false}
-        />
-        <p>French calendar</p>
-        <Calendar
-          onSelect={this.onSelect}
-          dayClasses={dayClasses}
-          locale="fr"
-          startOfWeekIndex={1}
         />
         <p>Calendar with custom day renderer</p>
         <Calendar onSelect={this.onSelect} dayRenderer={customDayRenderer} />

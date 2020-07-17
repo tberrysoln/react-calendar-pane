@@ -38,6 +38,22 @@ describe('Calendar', () => {
       .assertMonth('March');
   });
 
+  it('should be tell you when you move months', done => {
+    const callback = (month, start, end) => {
+      expect(month.format("MMMM")).to.equal("March");
+      expect(start.format("DD/MM/YYYY")).to.equal("01/03/2015");
+      expect(end.format("DD/MM/YYYY")).to.equal("05/04/2015");
+      done();
+    };
+
+    const calendar = (
+      <Calendar date={moment('03/04/2015', 'DD/MM/YYYY')} onSelect={onSelect} onViewChanged={callback} />
+    );
+
+    asserter(calendar)
+      .previousMonth();
+  });
+
   it('should be able to go to next month', () => {
     const calendar = (
       <Calendar date={moment('03/04/2015', 'DD/MM/YYYY')} onSelect={onSelect} />
@@ -84,7 +100,7 @@ describe('Calendar', () => {
       const calendar = (
         <Calendar date={moment()} onSelect={onSelect} dayOfWeekFormat={format} />
       );
-  
+
       asserter(calendar).assertDayOfTheWeek(format);
     });
   });
@@ -96,7 +112,7 @@ describe('Calendar', () => {
       const calendar = (
         <Calendar date={moment()} onSelect={onSelect} dayOfWeekFormat={format} />
       );
-  
+
       asserter(calendar).assertDayOfTheWeek(format);
     });
   });

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { format, isSameDay } from "date-fns";
 
 class Day extends Component {
   render() {
@@ -13,10 +14,10 @@ class Day extends Component {
     } = this.props;
 
     const classNames = ['Day'];
-    if (today.isSame(date, 'day')) {
+    if (isSameDay(today, date)) {
       classNames.push('today');
     }
-    if (selected && selected.isSame(date, 'day')) {
+    if (selected && isSameDay(selected, date)) {
       classNames.push('selected');
     }
 
@@ -30,7 +31,7 @@ class Day extends Component {
           onClick={() => handleClick(date)}
           type="button"
         >
-          {date.format('D')}
+          {format(date, 'd')}
         </button>
       );
     }
@@ -39,7 +40,7 @@ class Day extends Component {
       <td
         className={[...classNames, ...classes].join(' ')}
         data-date={date.toISOString()}
-        data-day={date.format('D')}
+        data-day={format(date, 'd')}
       >
         {body}
       </td>

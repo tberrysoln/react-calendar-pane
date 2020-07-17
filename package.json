@@ -25,7 +25,7 @@
     "es6"
   ],
   "dependencies": {
-    "moment": "^2.23.0"
+    "date-fns": "^2.14.0"
   },
   "peerDependencies": {
     "react": "^16.7.0",

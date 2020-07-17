@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import { format as formatDate } from "date-fns";
 
 const DayOfWeek = (props) => {
   const { date, format } = props;
 
   return (
     <th className="DayOfWeek">
-      {date.format(format)}
+      {formatDate(date, format)}
     </th>
   );
 };
 
 DayOfWeek.propTypes = {
-  date: PropTypes.instanceOf(moment).isRequired,
+  date: PropTypes.instanceOf(Date).isRequired,
   format: PropTypes.string,
 };
 

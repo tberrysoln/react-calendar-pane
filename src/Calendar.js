@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import moment from 'moment';
 import Day from './Day';
 import DayOfWeek from './DayOfWeek';
 import Week from './Week';
+import { format as formatDate, startOfMonth, endOfMonth, isBefore, isSameMonth, add, sub, subDays, getDay, setDay } from "date-fns";
 
 class Calendar extends Component {
   constructor(props) {
@@ -24,26 +24,7 @@ class Calendar extends Component {
     this.previous = this.previous.bind(this);
     this.next = this.next.bind(this);
     this.handleClick = this.handleClick.bind(this);
-  }
-
-  componentWillMount() {
-    moment.locale(this.props.locale);
-
-    if (!!this.state.date) {
-      this.state.date.locale(this.props.locale);
-    }
-
-    this.state.month.locale(this.props.locale);
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    moment.locale(this.props.locale);
-
-    if (!!nextState.date) {
-      nextState.date.locale(this.props.locale);
-    }
-
-    nextState.month.locale(this.props.locale);
+    this.viewChanged = this.viewChanged.bind(this);
   }
 
   handleClick(date) {
@@ -51,7 +32,7 @@ class Calendar extends Component {
 
     if (flag === true) {
       this.setState({
-        date: moment(date),
+        date: new Date(),
       });
     } else if (flag === false) {
       this.setState({
@@ -62,14 +43,29 @@ class Calendar extends Component {
 
   previous() {
     this.setState({
-      month: moment(this.state.month).subtract(1, 'month'),
-    });
+      month: sub(this.state.month, { months: 1 }),
+    }, this.viewChanged);
   }
 
   next() {
     this.setState({
-      month: moment(this.state.month).add(1, 'month'),
-    });
+      month: add(this.state.month, { months: 1 }),
+    }, this.viewChanged);
+  }
+
+  viewChanged() {
+    let { onViewChanged, startOfWeekIndex } = this.props;
+
+    if (!onViewChanged) {
+      return;
+    }
+
+    let { month } = this.state;
+
+    const start = setDay(startOfMonth(month), startOfWeekIndex);
+    const end = setDay(startOfMonth(month), 7 + startOfWeekIndex);
+
+    onViewChanged(month, start, end);
   }
 
   render() {
@@ -77,30 +73,24 @@ class Calendar extends Component {
 
     const classes = ['Calendar', this.props.className].join(' ');
 
-    const today = moment();
+    const today = new Date();
 
     const format = dayOfWeekFormat &&
-                    dayOfWeekFormat !== '' &&
-                    moment(today, dayOfWeekFormat).isValid() ? dayOfWeekFormat : 'dd'
+      dayOfWeekFormat !== '' && dayOfWeekFormat
 
     const date = this.state.date;
     const month = this.state.month;
 
-    const current = month
-      .clone()
-      .startOf('month')
-      .day(startOfWeekIndex);
-    if (current.date() > 1 && current.date() < 7) {
-      current.subtract(7, 'd');
+    let current = setDay(startOfMonth(month), startOfWeekIndex);
+
+    if (getDay(current) > 1 && getDay(current) < 7) {
+      current = subDays(current, 7);
     }
 
-    const end = month
-      .clone()
-      .endOf('month')
-      .day(7 + startOfWeekIndex);
+    let end = setDay(endOfMonth(month), 7 + startOfWeekIndex);
 
-    if (end.date() > 7) {
-      end.subtract(7, 'd');
+    if (getDay(end) > 7) {
+      end = subDays(end, 7);
     }
 
     const elements = [];
@@ -108,19 +98,19 @@ class Calendar extends Component {
     let week = 1;
     let i = 1;
     const daysOfWeek = [];
-    const day = current.clone();
+    let day = new Date(current.getTime());
     for (let j = 0; j < 7; j++) {
       const dayOfWeekKey = 'dayOfWeek' + j;
-      daysOfWeek.push(<DayOfWeek key={dayOfWeekKey} date={day.clone()} format={format} />);
-      day.add(1, 'days');
+      daysOfWeek.push(<DayOfWeek key={dayOfWeekKey} date={new Date(day.getTime())} format={format} />);
+      day = add(day, { days: 1 })
     }
-    while (current.isBefore(end)) {
+    while (isBefore(current, end)) {
       let dayClasses = this.props.dayClasses(current);
-      if (!current.isSame(month, 'month')) {
+      if (!isSameMonth(current, month)) {
         dayClasses = dayClasses.concat(['other-month']);
       }
       let props = {
-        date: current.clone(),
+        date: new Date(current.getTime()),
         selected: date,
         month: month,
         today: today,
@@ -138,8 +128,8 @@ class Calendar extends Component {
           {children}
         </Day>
       );
-      current.add(1, 'days');
-      if (current.day() === startOfWeekIndex) {
+      current = add(current, { days: 1 })
+      if (getDay(current) === startOfWeekIndex) {
         let weekKey = 'week' + week++;
         elements.push(<Week key={weekKey}>{days}</Week>);
         days = [];
@@ -157,8 +147,8 @@ class Calendar extends Component {
             </button>
           </th>
           <th colSpan="5">
-            <span className="month">{month.format('MMMM')}</span>{' '}
-            <span className="year">{month.format('YYYY')}</span>
+            <span className="month">{formatDate(month, 'MMMM')}</span>{' '}
+            <span className="year">{formatDate(month, 'yyyy')}</span>
           </th>
           <th className="nav next">
             <button className="nav-inner" onClick={this.next} type="button">
@@ -171,8 +161,8 @@ class Calendar extends Component {
       nav = (
         <tr className="month-header">
           <th colSpan="7">
-            <span className="month">{month.format('MMMM')}</span>{' '}
-            <span className="year">{month.format('YYYY')}</span>
+            <span className="month">{formatDate(month, 'MMMM')}</span>{' '}
+            <span className="year">{formatDate(month, 'yyyy')}</span>
           </th>
         </tr>
       );
@@ -190,12 +180,11 @@ class Calendar extends Component {
   }
 }
 Calendar.defaultProps = {
-  month: moment(),
+  month: new Date(),
   dayClasses: () => [],
   useNav: true,
-  locale: 'en',
   startOfWeekIndex: 0,
-  dayOfWeekFormat: 'dd',
+  dayOfWeekFormat: 'EEEEEE',
 };
 Calendar.propTypes = {
   onSelect: PropTypes.func.isRequired,
@@ -203,10 +192,10 @@ Calendar.propTypes = {
   month: PropTypes.object,
   dayClasses: PropTypes.func,
   useNav: PropTypes.bool,
-  locale: PropTypes.string,
   startOfWeekIndex: PropTypes.number,
   dayRenderer: PropTypes.func,
   dayOfWeekFormat: PropTypes.string,
+  onViewChanged: PropTypes.func,
 };
 
 export default Calendar;
