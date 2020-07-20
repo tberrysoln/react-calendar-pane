@@ -5,7 +5,18 @@ import React from 'react';
 import Calendar from '../src/Calendar';
 import asserter from './assertions/Asserter';
 import chai from 'chai';
-import { format as formatDate, startOfMonth, endOfMonth, isBefore, isSameMonth, add, sub, subDays, getDay, setDay } from "date-fns";
+import {
+  format as formatDate,
+  startOfMonth,
+  endOfMonth,
+  isBefore,
+  isSameMonth,
+  add,
+  sub,
+  subDays,
+  getDay,
+  setDay,
+} from 'date-fns';
 
 const expect = chai.expect;
 
@@ -41,14 +52,18 @@ describe('Calendar', () => {
   it('should be tell you initial view range', done => {
     let call = 0;
     const callback = (month, start, end) => {
-      expect(formatDate(month, "MMMM")).to.equal("April");
-      expect(formatDate(start, "MM/dd/yyyy")).to.equal("03/29/2015");
-      expect(formatDate(end, "MM/dd/yyyy")).to.equal("05/03/2015");
+      expect(formatDate(month, 'MMMM')).to.equal('April');
+      expect(formatDate(start, 'MM/dd/yyyy')).to.equal('03/29/2015');
+      expect(formatDate(end, 'MM/dd/yyyy')).to.equal('05/03/2015');
       done();
     };
 
     const calendar = (
-      <Calendar date={new Date('04/03/2015')} onSelect={onSelect} onViewChanged={callback} />
+      <Calendar
+        date={new Date('04/03/2015')}
+        onSelect={onSelect}
+        onViewChanged={callback}
+      />
     );
 
     asserter(calendar);
@@ -62,18 +77,21 @@ describe('Calendar', () => {
         call = call + 1;
         return;
       }
-      expect(formatDate(month, "MMMM")).to.equal("March");
-      expect(formatDate(start, "MM/dd/yyyy")).to.equal("03/01/2015");
-      expect(formatDate(end, "MM/dd/yyyy")).to.equal("04/05/2015");
+      expect(formatDate(month, 'MMMM')).to.equal('March');
+      expect(formatDate(start, 'MM/dd/yyyy')).to.equal('03/01/2015');
+      expect(formatDate(end, 'MM/dd/yyyy')).to.equal('04/05/2015');
       done();
     };
 
     const calendar = (
-      <Calendar date={new Date('04/03/2015')} onSelect={onSelect} onViewChanged={callback} />
+      <Calendar
+        date={new Date('04/03/2015')}
+        onSelect={onSelect}
+        onViewChanged={callback}
+      />
     );
 
-    asserter(calendar)
-      .previousMonth();
+    asserter(calendar).previousMonth();
   });
 
   it('should be able to go to next month', () => {
@@ -88,7 +106,9 @@ describe('Calendar', () => {
 
   it('should trigger the callback with selected date when clicking a day', done => {
     const callback = selectedDate => {
-      expect(formatDate(new Date(selectedDate), "MM/dd/yyyy")).to.equal('04/08/2015');
+      expect(formatDate(new Date(selectedDate), 'MM/dd/yyyy')).to.equal(
+        '04/08/2015'
+      );
       done();
     };
 
@@ -118,9 +138,13 @@ describe('Calendar', () => {
   it("day of week format defaults to 'EEEEEE' when format is invalid", () => {
     const formats = ['', null];
 
-    formats.forEach((format) => {
+    formats.forEach(format => {
       const calendar = (
-        <Calendar date={new Date()} onSelect={onSelect} dayOfWeekFormat={format} />
+        <Calendar
+          date={new Date()}
+          onSelect={onSelect}
+          dayOfWeekFormat={format}
+        />
       );
 
       asserter(calendar).assertDayOfTheWeek(format);
@@ -130,9 +154,13 @@ describe('Calendar', () => {
   it('displays day of the week following a given format', () => {
     const formats = ['EEEE', 'EEEEE', 'EEEEEE'];
 
-    formats.forEach((format) => {
+    formats.forEach(format => {
       const calendar = (
-        <Calendar date={new Date()} onSelect={onSelect} dayOfWeekFormat={format} />
+        <Calendar
+          date={new Date()}
+          onSelect={onSelect}
+          dayOfWeekFormat={format}
+        />
       );
 
       asserter(calendar).assertDayOfTheWeek(format);

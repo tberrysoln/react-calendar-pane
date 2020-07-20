@@ -1,14 +1,23 @@
 import React from 'react';
-import {
-  findDOMNode
-} from 'react-dom';
+import { findDOMNode } from 'react-dom';
 import {
   Simulate,
   scryRenderedDOMComponentsWithClass,
   findRenderedDOMComponentWithClass,
   renderIntoDocument,
 } from 'react-dom/test-utils';
-import { format as formatDate, startOfMonth, endOfMonth, isBefore, isSameMonth, add, sub, subDays, getDay, setDay } from "date-fns";
+import {
+  format as formatDate,
+  startOfMonth,
+  endOfMonth,
+  isBefore,
+  isSameMonth,
+  add,
+  sub,
+  subDays,
+  getDay,
+  setDay,
+} from 'date-fns';
 
 import chai from 'chai';
 
@@ -67,18 +76,24 @@ export default jsx => {
     },
 
     assertDayOfTheWeek(dayOfWeekFormat) {
-      const daysOfTheWeek = scryRenderedDOMComponentsWithClass(calendar, 'DayOfWeek');
+      const daysOfTheWeek = scryRenderedDOMComponentsWithClass(
+        calendar,
+        'DayOfWeek'
+      );
       let currentDayOfTheWeek = 0;
 
-      daysOfTheWeek.forEach((dayOfTheWeek) => {
+      daysOfTheWeek.forEach(dayOfTheWeek => {
         const currentDate = setDay(new Date(), currentDayOfTheWeek);
-        const format = (dayOfWeekFormat && dayOfWeekFormat !== '') ? dayOfWeekFormat : 'EEEEEE';
+        const format =
+          dayOfWeekFormat && dayOfWeekFormat !== ''
+            ? dayOfWeekFormat
+            : 'EEEEEE';
         const value = findDOMNode(dayOfTheWeek).textContent;
 
         expect(value).to.equal(formatDate(new Date(currentDate), format));
 
         currentDayOfTheWeek++;
-      })
+      });
 
       return this;
     },

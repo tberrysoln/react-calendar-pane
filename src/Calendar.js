@@ -4,7 +4,18 @@ import PropTypes from 'prop-types';
 import Day from './Day';
 import DayOfWeek from './DayOfWeek';
 import Week from './Week';
-import { format as formatDate, startOfMonth, endOfMonth, isBefore, isSameMonth, add, sub, subDays, getDay, setDay } from "date-fns";
+import {
+  format as formatDate,
+  startOfMonth,
+  endOfMonth,
+  isBefore,
+  isSameMonth,
+  add,
+  sub,
+  subDays,
+  getDay,
+  setDay,
+} from 'date-fns';
 
 class Calendar extends Component {
   constructor(props) {
@@ -46,15 +57,21 @@ class Calendar extends Component {
   }
 
   previous() {
-    this.setState({
-      month: sub(this.state.month, { months: 1 }),
-    }, this.viewChanged);
+    this.setState(
+      {
+        month: sub(this.state.month, { months: 1 }),
+      },
+      this.viewChanged
+    );
   }
 
   next() {
-    this.setState({
-      month: add(this.state.month, { months: 1 }),
-    }, this.viewChanged);
+    this.setState(
+      {
+        month: add(this.state.month, { months: 1 }),
+      },
+      this.viewChanged
+    );
   }
 
   viewChanged() {
@@ -77,9 +94,10 @@ class Calendar extends Component {
 
     const classes = ['Calendar', this.props.className].join(' ');
 
-    const today = new Date();
+    const today = Date.now();
 
-    const format = (dayOfWeekFormat && dayOfWeekFormat !== '') ? dayOfWeekFormat : 'EEEEEE'
+    const format =
+      dayOfWeekFormat && dayOfWeekFormat !== '' ? dayOfWeekFormat : 'EEEEEE';
     const date = this.state.date;
     const month = this.state.month;
 
@@ -103,8 +121,14 @@ class Calendar extends Component {
     let day = new Date(current.getTime());
     for (let j = 0; j < 7; j++) {
       const dayOfWeekKey = 'dayOfWeek' + j;
-      daysOfWeek.push(<DayOfWeek key={dayOfWeekKey} date={new Date(day.getTime())} format={format} />);
-      day = add(day, { days: 1 })
+      daysOfWeek.push(
+        <DayOfWeek
+          key={dayOfWeekKey}
+          date={new Date(day.getTime())}
+          format={format}
+        />
+      );
+      day = add(day, { days: 1 });
     }
     while (isBefore(current, end)) {
       let dayClasses = this.props.dayClasses(current);
@@ -130,7 +154,7 @@ class Calendar extends Component {
           {children}
         </Day>
       );
-      current = add(current, { days: 1 })
+      current = add(current, { days: 1 });
       if (getDay(current) === startOfWeekIndex) {
         let weekKey = 'week' + week++;
         elements.push(<Week key={weekKey}>{days}</Week>);

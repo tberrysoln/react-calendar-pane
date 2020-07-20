@@ -29,7 +29,7 @@ class Example extends Component {
   }
 
   render() {
-    let dayClasses = function (date) {
+    let dayClasses = function(date) {
       if (isWeekend(date)) {
         return ['weekend'];
       }

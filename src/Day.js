@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay } from 'date-fns';
 
 class Day extends Component {
   render() {
