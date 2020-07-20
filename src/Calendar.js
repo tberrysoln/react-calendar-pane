@@ -38,7 +38,7 @@ class Calendar extends Component {
     this.viewChanged = this.viewChanged.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.viewChanged();
   }
 
