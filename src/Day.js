@@ -50,8 +50,8 @@ class Day extends Component {
 
 Day.propTypes = {
   handleClick: PropTypes.func.isRequired,
-  date: PropTypes.object.isRequired,
-  today: PropTypes.object.isRequired,
+  date: PropTypes.instanceOf(Date).isRequired,
+  today: PropTypes.instanceOf(Date).isRequired,
   selected: PropTypes.object,
   children: PropTypes.node,
 };

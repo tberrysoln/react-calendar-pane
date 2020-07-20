@@ -94,7 +94,7 @@ class Calendar extends Component {
 
     const classes = ['Calendar', this.props.className].join(' ');
 
-    const today = Date.now();
+    const today = new Date();
 
     const format =
       dayOfWeekFormat && dayOfWeekFormat !== '' ? dayOfWeekFormat : 'EEEEEE';
@@ -214,8 +214,8 @@ Calendar.defaultProps = {
 };
 Calendar.propTypes = {
   onSelect: PropTypes.func.isRequired,
-  date: PropTypes.object,
-  month: PropTypes.object,
+  date: PropTypes.instanceOf(Date),
+  month: PropTypes.instanceOf(Date),
   dayClasses: PropTypes.func,
   useNav: PropTypes.bool,
   startOfWeekIndex: PropTypes.number,
